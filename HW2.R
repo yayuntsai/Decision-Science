@@ -40,5 +40,28 @@ salary = function(){
                         size = 1,
                         prob=c(0.25, 0.35, 0.3, 0.1),
                         replace=T)
+  fix_cost = 3995
+  fix_labor = runif(1, 5040,6860)
   
+  gl_self_salary = num_of_meal * rev_per_meal - fix_cost - fix_labor
+
+  if(gl_self_salary > 9000){
+    gross_salary = gl_self_salary * 0.9
+  }
+  else if(gl_self_salary > 3500 & gl_self_salary <9000){
+    gross_salary = gl_self_salary
+  }
+  else{
+    gross_salary = 3500
+  }
+    return(c(cf_salary,gl_self_salary,gross_salary))
 }
+
+salary_sim = replicate(S, salary())
+exp_cf_salary = mean(salary_sim[1,1, 1:S])
+exp_gl_self_salary = mean(salary_sim[2,2, 1:S])
+exp_gross_salary = mean(salary_sim[3,3, 1:S])
+
+summary(salary_sim[1,1, 1:S])
+summary(salary_sim[2,2, 1:S])
+summary(salary_sim[3,3, 1:S])
