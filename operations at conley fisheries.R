@@ -17,6 +17,29 @@ F=c()
 for(i in 1:S){
   F[i] = min(fish.R.sim[i],fish.Q) * price.R.sim[i] - fixed.operate
 }
+
 summary(F)
 hist(F,breaks=200)
+sum(F>1375) / S
+sum(F<0) / S
+
+quantile(F,0.975)
+quantile(F,0.025)
+
+
+install.packages("EnvStats")
+#Install the package above if needed
+library(EnvStats)
+# G market price is random
+price.G  = rnorm(S, 3.5, 0.5)
+frac = runif(S, 0.7,1)
+fullload = 3500
+fish.Q.sim = round(fullload*frac,0)
+demand.G = rtri(S,2000, 6000, 5000) * frac
+
+Frac.fish = c()
+for(i in 1:S){
+  Frac.fish[i] = price.G[i] * min(demand.G[i],fish.Q.sim[i])-fixed.operate
+}
+mean(Frac.fish)
 
