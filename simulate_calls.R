@@ -13,3 +13,5 @@ for(s in 1:S){
 }
 
 plot(table(calls)/S)
+lines(min(calls):max(calls),
+      dpois(min(calls):max(calls),6),col='red',lty=2,lwd=3)
