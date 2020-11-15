@@ -35,7 +35,7 @@ price.G  = rnorm(S, 3.5, 0.5)
 frac = runif(S, 0.7,1)
 fullload = 3500
 fish.Q.sim = round(fullload*frac,0)
-demand.G = rtri(S,2000, 6000, 5000) * frac
+demand.G = rtri(S, 2000, 6000, 5000) * frac
 
 Frac.fish = c()
 for(i in 1:S){
