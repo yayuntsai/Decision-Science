@@ -59,17 +59,51 @@ hist(RMtoR, breaks=200)
 
 
 
-#Q2
-cost = 10
+##Q2
+#Cost parameters
+unitcost = 10
+unitprice = 25
 winPR = 25
 losePR = 12.5
 prob.win = 0.4
 prob.lose = 1-prob.win
 
 D.anti = rnorm(S,9000,2000)
-D.win = rnorm(S,6000,2000)
+
 lose.mean = 2000
 lose.stdev = 1000
+
 scale.lose = (lose.stdev)^2/lose.mean
-D.lose = 
+shape.lose = lose.mean/scale.lose
+scale.lose
+shape.lose
+
+#Number of simulation runs
+S=15000
+game = sample(c(0,1),S,replace=T,
+              prob=c(prob.lose,prob.win))
+sim.demand=rep(0,S)
+
+for(i in 1:S){
+  if(sim.game[s]==1){
+    sim.demand[s] = rnorm(1,6000,2000)
+  }else{
+    sim.demand[s] = rgamma(1,shape.lose,scale.lose)
+  }
+  sim.demand[s] = rounf(sim.demand[s],0)
+  
+}
+
+profit = function(x=20000,d){
+  #d: demand realizations
+  profit.val=c()
+  for(i in 1:length(d)){
+    sim.profit[i] = (winPR-unitcost) * min(x,demand[i])
+  }
+  profit.val
+}
+
+
+
+
 
