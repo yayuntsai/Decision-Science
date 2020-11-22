@@ -40,20 +40,21 @@ RMtoG=c()
 RMtoR=c()
 
 
-for(cor in 1:length(corr.array)){
+#for(cor in 1:length(corr.array)){
   for(s in 1:S){
     RtoG.MtoR[s] = min(CapR[s],D.Glou[s]) * sim.PRG[s] + min(CapM[s],D.Rock[s]) * sim.PRR[s] - (oper.cost * 2)
     RtoR.MtoG[s] = min(CapR[s],D.Rock[s]) * sim.PRR[s] + min(CapM[s],D.Glou[s]) * sim.PRG[s] - (oper.cost * 2)
     RMtoG[s] = min(CapR[s] + CapM[s], D.Glou[s]) * sim.PRG[s]
     RMtoR[s] = min(CapR[s] + CapM[s], D.Rock[s]) * sim.PRR[s]
   }
-}
+#}
 
 hist(RtoG.MtoR, breaks=200)
 hist(RtoR.MtoG, breaks=200)
 hist(RMtoG, breaks=200)
 hist(RMtoR, breaks=200)
 
+plot()
 
 
 
