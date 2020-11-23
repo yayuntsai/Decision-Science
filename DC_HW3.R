@@ -26,40 +26,50 @@ for(s in 1:S){
   for(corr in 1:9){
     P.corcovMatrix = matrix(c(sigma.PRR^2, sigma.PRR * sigma.PRG * corr.PR[corr], sigma.PRR * sigma.PRG * corr.PR[corr], sigma.PRG^2),nrow=2)
     sim.PR = mvrnorm(S, mu=c(mu.PRR,mu.PRG), P.corcovMatrix)
-    sim_PRG[s,corr] = mean(sim.PR[,1])
+    sim_PRR[s,corr] = mean(sim.PR[,1])
+    sim_PRG[s,corr] = mean(sim.PR[,2])
   }
 }
 
-
-#Simulated prices
-sim.PRR=rnorm(S,mu.PRR,sigma.PRR)
-sim.PRG=rnorm(S,mu.PRG,sigma.PRG)
-
+#Simulated Fish
 FracRi = runif(S,0.6,0.9)
-CapR = fullboat * FracRi
+CapR = round(fullboat * FracRi, 0)
 FracM = rtri(S,0.5, 1, 0.75)
-CapM = fullboat * FracM
+CapM = round(fullboat * FracM, 0)
 
 
 #strategies
 #Rick goes to Glou and Morty goes to Rock
-RtoG.MtoR=c() 
+RtoG.MtoR=c()
+RtoG.MtoR=matrix(nrow=S, col=9)
 #Rick goes to Rock and Morty goes to Glou
 RtoR.MtoG=c()
+RtoR.MtoG=matrix(nrow=S, col=9)
 # Rick and Morty go to Glou
 RMtoG=c()
+RMtoG=matrix(nrow=S, col=9)
 #Rick and Morty go to Rock
 RMtoR=c()
+RMtoR=matrix(nrow=S, col=9)
 
 
-#for(cor in 1:length(corr.array)){
-  for(s in 1:S){
-    RtoG.MtoR[s] = min(CapR[s],D.Glou[s]) * sim.PRG[s] + min(CapM[s],D.Rock[s]) * sim.PRR[s] - (oper.cost * 2)
-    RtoR.MtoG[s] = min(CapR[s],D.Rock[s]) * sim.PRR[s] + min(CapM[s],D.Glou[s]) * sim.PRG[s] - (oper.cost * 2)
-    RMtoG[s] = min(CapR[s] + CapM[s], D.Glou[s]) * sim.PRG[s]
-    RMtoR[s] = min(CapR[s] + CapM[s], D.Rock[s]) * sim.PRR[s]
+#expected profit
+for(s in 1:S){
+  for(corr in 1:9){
+    RtoG.MtoR[s,corr] = min(CapR[s],D.Glou[s]) * sim.PRG[s,corr] + min(CapM[s],D.Rock[s]) * sim.PRR[s,corr] - (oper.cost * 2)
+    RtoR.MtoG[s,corr] = min(CapR[s],D.Rock[s]) * sim.PRR[s,corr] + min(CapM[s],D.Glou[s]) * sim.PRG[s,corr] - (oper.cost * 2)
+    RMtoG[s,corr] = min(CapR[s] + CapM[s], D.Glou[s]) * sim.PRG[s,corr]
+    RMtoR[s,corr] = min(CapR[s] + CapM[s], D.Rock[s]) * sim.PRR[s,corr]
   }
-#}
+}
+
+#profit mean
+for(pro in 1:9){
+  RtoG.MtoR[pro] = mean(RtoG.MtoR[,pro])
+  RtoR.MtoG[pro] = mean(RtoR.MtoG[,pro])
+  RMtoG[pro] = mean(RMtoG[,pro])
+  RMtoR[pro] = mean(RMtoR[,pro])
+}
 
 hist(RtoG.MtoR, breaks=200)
 hist(RtoR.MtoG, breaks=200)
