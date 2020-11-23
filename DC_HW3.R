@@ -1,22 +1,34 @@
 #Q1
 install.packages("EnvStats")
 library(EnvStats)
-S=10000
+library(MASS)
+
+fullboat = 3800
+oper.cost = 7200
+S=100
+
 #Demand
 D.Glou = round(rtri(S,4000,8000,7000),0)
 D.Rock = round(rtri(S,4800,7200,6300),0)
-fullboat = 3800
-oper.cost = 7200
 
+#Price
 mu.PRR = 3.65
 sigma.PRR = 0.25
-#expected price at Glou
 mu.PRG = 3.5
-#the standard devaition of the price at Glou
 sigma.PRG = 0.35
-corrPRGxPRR = -0.8
-corr.array = c(-0.8, -0.6, -0.4, -0.2, 0, 0.2, 0.4, 0.6, 0.8)
+
+corr.PR = c(-0.8, -0.6, -0.4, -0.2, 0, 0.2, 0.4, 0.6, 0.8)
 length(corr.array)
+#expected price at Glou
+sim_PRG = matrix(nrow = S, ncol = 9)
+sim_PRR = matrix(nrow = S, ncol = 9)
+for(s in 1:S){
+  for(corr in 1:9){
+    P.corcovMatrix = matrix(c(sigma.PRR^2, sigma.PRR * sigma.PRG * corr.PR[corr], sigma.PRR * sigma.PRG * corr.PR[corr], sigma.PRG^2),nrow=2)
+    sim.PR = mvrnorm(S, mu=c(mu.PRR,mu.PRG), P.corcovMatrix)
+    sim_PRG[s,corr] = mean(sim.PR[,1])
+  }
+}
 
 
 #Simulated prices
