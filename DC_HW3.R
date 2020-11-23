@@ -71,12 +71,21 @@ for(pro in 1:9){
   RMtoR[pro] = mean(RMtoR[,pro])
 }
 
-hist(RtoG.MtoR, breaks=200)
-hist(RtoR.MtoG, breaks=200)
-hist(RMtoG, breaks=200)
-hist(RMtoR, breaks=200)
 
-plot()
+plot_exp_profit = function(){
+  profit.max = max(RtoG.MtoR, RtoR.MtoG, RMtoG, RMtoR)
+  profit.min = min(RtoG.MtoR, RtoR.MtoG, RMtoG, RMtoR)
+  axis(1, at = seq(-0.8, 0.8, by = 0.2), las=2)
+  plot(corr.PR, RtoG.MtoR, type="b", col = "green", lwd = 2, main="Expected Profit", xlab = "corr(P.Glou, P.Rock)", ylab="Profit", xaxt="n", ylim = c(profit.min - 1000, profit.max + 2000))
+  lines(P.corr, RtoR.MtoG, type = "b", col = "blue")
+  lines(P.corr, RMtoG, type = "b", col = "red")
+  lines(P.corr, RMtoR, type = "b", col = "orange")
+  legend("top", c("a", "b", "c", "d"), fill = c("green", "blue", "red" ,"orange"), horiz=TRUE, cex = 0.8, box.lwd = 0, inset = 0.005)
+}
+
+exp.plot <- plot_exp_profit()
+
+
 
 
 
@@ -103,6 +112,8 @@ shape.lose
 
 #Number of simulation runs
 S=15000
+x.val=seq(5000,13000,1000)
+
 game = sample(c(0,1),S,replace=T,
               prob=c(prob.lose,prob.win))
 sim.demand=rep(0,S)
@@ -113,7 +124,7 @@ for(i in 1:S){
   }else{
     sim.demand[s] = rgamma(1,shape.lose,scale.lose)
   }
-  sim.demand[s] = rounf(sim.demand[s],0)
+  sim.demand[s] = round(sim.demand[s],0)
   
 }
 
@@ -125,6 +136,26 @@ profit = function(x=20000,d){
   }
   profit.val
 }
+
+sim.profit = matrix(0, nrow=S, ncol=length(x.val))
+avg.profit = c()
+sd.profit = c()
+
+for(i in 1:length(x.val)){
+  sim.profit[,i]=profit(x.val[i],d=sim.demand)
+  avg.profit[i]=mean(sim.profit[,i])
+  sd.profit[i]=sd(sim.profit[,i])
+  cat("production quantity:", x.val[i], "\n")
+}
+
+x11(width=12,height=5)
+par(mfrow=c(1,2))
+plot(x.val,avg.profit,type='l',xlab="production quantity",lwd=3)
+
+
+x.val[which.max(avg.profit)]
+max(avg.profit)
+
 
 
 
