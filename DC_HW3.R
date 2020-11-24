@@ -113,48 +113,73 @@ x.val=seq(5000,13000,1000)
 #prob of game win/lose
 sim.game = sample(c(0,1),S,replace=T,
               prob=c(prob.lose,prob.win))
-sim.demand=rep(0,S)
 
-sim.anti = rnorm(S,9000,2000)
-sim.d.win = rnorm(1,6000,2000)
-sim.d.lose = rgamma(1,shape.lose,scale.lose)
+sim.anti = round(rnorm(S,9000,2000), 0)
+after.demand = c()
 
 for(s in 1:S){
   if(sim.game==1){
-    revenue.win[s] = sim.anti[s] * unitprice + sim.d.win[s] * winPR
+    after.demand[s] = round(rnorm(1,6000,2000), 0)
   }else{
-    revenue.lose[s] = sim.anti[s] * unitprice + sim.d.lose[s] * losePR
+    after.demand[s] = round(rgamma(1,shape.lose,scale.lose), 0)
   }
 }
 
-profit = function(x=20000,d){
+profit = function(x=20000, before, after){
+  profit.val = c()
   #d: demand realizations
-  for(i in 1:length(d)){
-    profit.val[i]=(unitprice-unitcost)*min(x, d[i])
+  for(i in 1:S){
+    profit.val[i] = (unitprice-unitcost) * min(x,sim.anti[i])
+  
+    if(x-sim.anti[i] > 0){
+      if(sim.game==1){
+        #win
+        profit.val[i] = profit.val[i] + (winPR-unitcost) * min(x-sim.anti[i], after[i]) - unitcost * (x-sim.anti[i]-after[i])
+      }else{
+        #lose
+        profit.val[i] = profit.val[i] + (losePR-unitcost) * min(x-sim.anti[i], after[i]) - unitcost * (x-sim.anti[i]-after[i])
+      }
+    }
   }
   profit.val
 }
+
 
 sim.profit = matrix(0, nrow=S, ncol=length(x.val))
 avg.profit = c()
 sd.profit = c()
 
-cu.win=winPR-unitcost
-co.win=unitcost-salvage
-cu.lose=losePR-unitcost
-co.lose=unitcost-salvage
+for(i in 1:length(x.val)){
+  sim.profit[,i] = profit(x.val[i],sim.anti,after.demand)
+  avg.profit[i] = mean(sim.profit[,i])
+}
+sim.profit
+avg.profit
+
+
+
+
+
+
+
+
+
+cu.win = winPR-unitcost
+co.win = unitcost-salvage
+cu.lose = losePR-unitcost
+co.lose = unitcost-salvage
 cu
 co
 
 #Calculate the critical fractile
-frac.win=cu.win/(cu.win+co.win)
-frac.lose=cu.lose/(cu.lose+co.lose)
+frac.win = cu.win/(cu.win+co.win)
+frac.lose = cu.lose/(cu.lose+co.lose)
 
-x.win=quantile(sim.d.win,frac.win,names=FALSE)
-x.win=round(x.win,0)
-x.lose=quantile(sim.d.lose,frac.lose,names=FALSE)
-x.lose=round(x.win,0)
-profit.win = profit(x.win,sim.d.win)
-profit.lose = profit(x.lose,sim.d.lose)
+perfectq.win = quantile(sim.d.win,frac.win,names=FALSE) 
+perfectq.win = round(perfectq.win,0)
+perfectq.lose = quantile(sim.d.lose,frac.lose,names=FALSE)
+perfectq.lose = round(perfectq.lose,0)
+profit.win = profit(perfectq.win,sim.d.win)
+profit.lose = profit(perfectq.lose,sim.d.lose)
 
 
