@@ -35,4 +35,28 @@ S=10000
 sim.table = replicate(S,sim.ICmodule())
 dim(sim.table)
 
+badnum=c()
+badnumreg=c()
+badnumirreg=c()
+numreg=c()
+numirreg=c()
+for(i in 1:ncol(sim.table)){
+  badnumreg[i]=sum(sim.table[,i]=="badreg")
+  badnumirreg[i]=sum(sim.table[,i]=="badirreg")
+  badnum[i]=sum(sim.table[,i]=="badreg")+
+    sum(sim.table[,i]=="badirreg")
+  numreg[i]=sum(sim.table[,i]=="badreg")+
+    sum(sim.table[,i]=="goodreg")
+  numirreg[i]=sum(sim.table[,i]=="badirreg")+
+    sum(sim.table[,i]=="goodirreg")
+}
 
+sum(badnum==2)/S
+
+sum(numreg==10 & badnum==2) #有多少情況是剛好兩個壞掉
+sum(numreg==10 & badnum==2)/sum(badnum==2)
+
+k=1
+sum(badnum==k)
+sum(numirreg>=1 & badnum==k)
+sum(numirreg>=1 & badnum==k)/sum(badnum==k)
