@@ -31,7 +31,6 @@ for(s in 1:S){
    S.profit.weak[s]=-cS*QS+price*min(QS,D.weak[s])
    #Supplier S & strong market
    S.profit.strong[s]=-cS*QS+price*min(QS,D.strong[s])
-   ##
    #Supllier P & weak market
    P.profit.weak[s]=-cP*QP-fixcP+price*min(QP,D.weak[s])
    #Supplier P & strong market
