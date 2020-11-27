@@ -29,38 +29,41 @@ apply(max.k,2,mean)
 
 
 
+
+
+
 ##The optimal stopping problem
 set.seed(9527)
 
 ##A Model for "Strict Success"
-simulate_dating=function(population=100,
+simulate_dating = function(population=100,
                 phase1_fraction=1/exp(1),
                 num_iterations=1) {
   #is_soulmate=logical(length=num_iterations)
-  is_soulmate=rep(0,length=num_iterations)
-  phase1_size=round(population*phase1_fraction)
+  is_soulmate = rep(0,length=num_iterations)
+  phase1_size = round(population*phase1_fraction)
   #
   for(case_idx in 1:num_iterations) {
     #scores of potential mates
-    score=rnorm(population)
-    optimal_score=max(score)
+    score = rnorm(population)
+    optimal_score = max(score)
     #
     # we date the first phase1_size people
     # and note the maximum score in that group
-    cutoff_score=max(score[1:phase1_size])
+    cutoff_score = max(score[1:phase1_size])
     #
     # now select as your life partner the next date with a better score
-    spouse_index=phase1_size +
+    spouse_index = phase1_size +
        which(score[(phase1_size+1):population] 
               > cutoff_score)[1]
     
     # pick the last one if nobody better came along before then
     if (is.na(spouse_index)) {
-      spouse_index=population
+      spouse_index = population
     }
     
     is_soulmate[case_idx]=
-      (score[spouse_index]==optimal_score)
+      (score[spouse_index] == optimal_score)
   }
   mean(is_soulmate)
 }
