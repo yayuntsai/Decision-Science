@@ -7,5 +7,16 @@ R.demand = sample(c(0,1000,2000,3000,4000,5000,6000),S,
                        replace = TRUE)
 
 #Without uncertaincy
-# to G
-revenue = 3.25
+earning = c()
+S=10000
+
+#toG
+revenue.G = 3.25 * full.boat - oper.cost
+revenue.R =c()
+for(s in 1:S){
+  #to R
+  revenue.R[s] = R.PR[s] * min(R.demand[s],full.boat) - oper.cost
+}
+
+mean(revenue.R)
+hist(revenue.R, breaks=200)
