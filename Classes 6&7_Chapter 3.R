@@ -40,8 +40,8 @@ simulate_dating = function(population=100,
                 phase1_fraction=1/exp(1),
                 num_iterations=1) {
   #is_soulmate=logical(length=num_iterations)
-  is_soulmate = rep(0,length=num_iterations)
-  phase1_size = round(population*phase1_fraction)
+  is_soulmate = rep(0,length = num_iterations)
+  phase1_size = round(population * phase1_fraction)
   #
   for(case_idx in 1:num_iterations) {
     #scores of potential mates
@@ -109,7 +109,7 @@ simulate_dating_2=function(population=1000,
     
     # pick the last one if nobody better came along before then
     if(is.na(spouse_index)) {
-      spouse_index=population
+      spouse_index = population
     }
     
     spouse_scores[case_idx]=score[spouse_index]
@@ -248,9 +248,7 @@ summary(EndTime.corr)
 
 FinishTime1.corr=Time11.corr+Time21.corr
 sum(FinishTime1.corr<=180)/S
-
 quantile(FinishTime1.corr,0.95)
-
 sum(EndTime.corr<=480)/S
 
 
