@@ -24,24 +24,47 @@ exp_smallest
 
 #Q4
 n=10
-outcome.label=c()
-for(i in 1:n){
-  skill.label = sample(c('h','l'),1,
-                         replace=T)
-  if(skill.label=='h'){
-    sale = sample(c('s','f'),2-0,
-                      prob=c(2/3, 1/3),
-                      replace=T)
-  }else{
-    sale = sample(c('s','f'),20,
-                      prob=c(1/3, 2/3),
-                      replace=T)
+Q4 = function(n){
+  outcome.label=c()
+  is.prom=c()
+  is.promh=c()
+  skill.label = sample(c('h','l'),n,
+                       replace=T)
+  for(i in 1:n){
+    if(skill.label[i]=='h'){
+      sale = sample(c('s','f'),20,
+                    prob=c(2/3, 1/3),
+                    replace=T)
+    }else{
+      sale = sample(c('s','f'),20,
+                    prob=c(1/3, 2/3),
+                    replace=T)
+    }
+    
+    if(sum(sale=='s')>=9){
+      is.prom[i] = 1
+    }else{
+      is.prom[i]=0
     }
   }
-  
+  skill.label
+  sale
+  for(i in 1:n){
+    if(skill.label[i]=="h" && sale[i]=="s"){
+      is.promh[i]=1
+    }else{
+      is.promh[i]=0
+    }
+  }
+  #Q4 (a)
+  promoted = sum(is.prom==1)/n
+  result[1] = promoted
+  #Q4 (b)
+  prob_high = sum(is.promh==1)/n
+  result[2] = prob_high / (sum(skill=='h')/n)
+  result[3] = prob_high / promoted
+  result
 }
-sum(sum(outcome.label=="s")>=9) / n
-
 
 
 
