@@ -23,8 +23,24 @@ exp_smallest
 
 
 #Q4
-
-
+n=10
+outcome.label=c()
+for(i in 1:n){
+  skill.label = sample(c('h','l'),1,
+                         replace=T)
+  if(skill.label=='h'){
+    sale = sample(c('s','f'),2-0,
+                      prob=c(2/3, 1/3),
+                      replace=T)
+  }else{
+    sale = sample(c('s','f'),20,
+                      prob=c(1/3, 2/3),
+                      replace=T)
+    }
+  }
+  
+}
+sum(sum(outcome.label=="s")>=9) / n
 
 
 
