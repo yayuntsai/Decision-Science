@@ -2,7 +2,8 @@
 S = 200
 
 simulation = function(server, S){
-  results = matrix(NA, nrow = S, ncol = 6, dimnames = list(NULL, c("total_cost", "idle_cost", "loss_cost", "wait_cost", "utilization", "interval")))
+  results = matrix(NA, nrow = S, ncol = 6, 
+                   dimnames = list(NULL, c("total_cost", "idle_cost", "loss_cost", "wait_cost", "utilization", "interval")))
   for(s in 1:S){
     num_server = server
     num_idle_server = num_server #idle server
