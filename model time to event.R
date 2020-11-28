@@ -3,7 +3,7 @@ taskt.sigma = c(7,10,12,3,30,15,5,3)
 
 shape.est = c()
 scale.est = c()
-scale.est = taskt.mean^2 / taskt.sigma
+scale.est = taskt.sigma^2 / taskt.mean
 shape.est = taskt.mean / scale.est
 
 S = 10000
