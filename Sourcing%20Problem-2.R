@@ -1,18 +1,15 @@
 ##A sourcing problem with two suppliers S & P
 #Market price
 price=150
-
 #Q:Capacity; c:Unit cost
 #Supplier S
 QS=5000
 cS=120
-
 #Supplier P
 QP=10000
 cP=100
 #Fixed cost
 fixcP=50000
-
 #Simulate demand
 set.seed(9527)
 S=10000
@@ -20,7 +17,6 @@ D.weak=sample(seq(2000,8000,by=1),S,
               replace=TRUE)
 D.strong=sample(seq(6000,14000,by=1),S,
                 replace=TRUE)
-
 #Vectors for profits
 S.profit.weak=S.profit.strong=c()
 P.profit.weak=P.profit.strong=c()
