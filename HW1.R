@@ -23,11 +23,12 @@ exp_smallest
 
 
 #Q4
-n=10
+n=1000
 Q4 = function(n){
   outcome.label=c()
   is.prom=c()
   is.promh=c()
+  result=c()
   skill.label = sample(c('h','l'),n,
                        replace=T)
   for(i in 1:n){
@@ -61,11 +62,11 @@ Q4 = function(n){
   result[1] = promoted
   #Q4 (b)
   prob_high = sum(is.promh==1)/n
-  result[2] = prob_high / (sum(skill=='h')/n)
+  result[2] = prob_high / (sum(skill.label=='h')/n)
   result[3] = prob_high / promoted
   result
 }
-
+result=Q4(9)
 
 
 #Q5
@@ -76,8 +77,10 @@ for(s in 1:n){
   borrow.days = sample(c(4,5,6,7),n,
                        prob=c(0.1,0.2,0.3,0.4),
                        replace=T)
-  delay = sample(c(1,0),n,
+  delay = sample(c(2,0),n,
                  replace=T)
-  total.days[s] = borrow.days[s] + 2 * delay[s]
+  total.days[s] = borrow.days[s] + delay[s]
 }
-prob.wed = sum(total.days=6)/n
+prob.wed = sum(total.days==6)/n
+
+
