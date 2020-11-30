@@ -3,7 +3,8 @@ S = 200
 
 simulation = function(server, S){
   results = matrix(NA, nrow = S, ncol = 6, 
-                   dimnames = list(NULL, c("total_cost", "idle_cost", "loss_cost", "wait_cost", "utilization", "interval")))
+                   dimnames = list(NULL, c("total_cost", "idle_cost", "loss_cost", 
+                                           "wait_cost", "utilization", "interval")))
   for(s in 1:S){
     num_server = server
     num_idle_server = num_server #idle server
@@ -19,7 +20,8 @@ simulation = function(server, S){
     
 
     queue = matrix(nrow = 0, ncol = 3,dimnames = list(NULL, c("cus_ID", "arr_time", "quit_time"))) 
-    cust_list = matrix(nrow = 0, ncol = 4, dimnames = list(NULL, c("cus_ID", "arr_time", "quit_time", "description"))) #???????ѩҦ??ȤH
+    cust_list = matrix(nrow = 0, ncol = 4, dimnames = list(NULL, c("cus_ID", "arr_time", "quit_time", 
+                                                                   "description"))) #???????ѩҦ??ȤH
     ID_count = 1 
     ###simulate
     for (t in 1:open_minute) { # convert to minute
@@ -66,7 +68,8 @@ simulation = function(server, S){
             serve_time = round(rexp(1, 3) * 60) #simulate serve time and convert to minute 
             end_serve_time = t + serve_time #calculate the end time
             record_end_serve_time = c(record_end_serve_time, end_serve_time) #????serve?????ɶ?
-            cust_list[which(cust_list[, "cus_ID"] == id_), "description"] = paste("Finish serve at:", end_serve_time)
+            cust_list[which(cust_list[, "cus_ID"] == id_), "description"] = 
+              paste("Finish serve at:", end_serve_time)
             num_serving = num_serving + 1 #?[?W???bServe???ƶq
           }
         }
@@ -78,14 +81,16 @@ simulation = function(server, S){
     #loss cost:30, idle cost(per hour):10 (per minute):10/60, wait cost(per hour):5 (per minute):5/60
     total_cost = num_loss_cust * 30 + total_time_server_idle * (1/6) + total_wait_time * (1/12)
     utilization = (num_server * 480 - total_time_server_idle) / (num_server * 480)
-    results[s, ] = c(total_cost, total_time_server_idle * (1/6), num_loss_cust * 30, total_wait_time * (1/12), utilization,interval)
+    results[s, ] = c(total_cost, total_time_server_idle * (1/6), num_loss_cust * 30, 
+                     total_wait_time * (1/12), utilization,interval)
   }
   return(results)
 }
 
 ##put the mean cost of different number of server
 results = matrix(NA, nrow = 10, ncol = 6,
-                 dimnames = list(NULL, c("avg_total_cost", "avg_idle_cost", "avg_loss_cost", "avg_wait_cost", "avg_utilization", "avg_interval")))
+                 dimnames = list(NULL, c("avg_total_cost", "avg_idle_cost", "avg_loss_cost", 
+                                         "avg_wait_cost", "avg_utilization", "avg_interval")))
 for(n in 1:10){ # 1??10?xserver
   sim_results = simulation(n, 200)
   results[n, ] = apply(sim_results, 2, mean) #calcalate mean cost of 200 simulation
