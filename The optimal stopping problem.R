@@ -3,11 +3,11 @@ set.seed(9527)
 
 ##A Model for "Strict Success"
 simulate_dating=function(population=100,
-                         phase1_fraction=1/exp(1),
+                         phase1_fraction=1/exp(1), #先找出前幾個（比率）
                          num_iterations=1) {
   #is_soulmate=logical(length=num_iterations)
   is_soulmate=rep(0,length=num_iterations)
-  phase1_size=round(population*phase1_fraction)
+  phase1_size=round(population*phase1_fraction) #總數*比率 = 先從前N個找出分數最好的
   #
   for(case_idx in 1:num_iterations) {
     #scores of potential mates
@@ -16,7 +16,7 @@ simulate_dating=function(population=100,
     #
     # we date the first phase1_size people
     # and note the maximum score in that group
-    cutoff_score=max(score[1:phase1_size])
+    cutoff_score = max(score[1:phase1_size])
     #
     # now select as your life partner the next date with a better score
     spouse_index=phase1_size +
