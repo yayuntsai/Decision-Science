@@ -86,11 +86,11 @@ for(q in 1:100){
       #supply
       if(s==1){
         supply.inmonth[1]= round(63 *analysts.retention,0)
-      }else if(s==5){
+      }else if(s==4){
         supply.inmonth[s] = round(supply.inmonth[s-1] * analysts.retention5678,0) + A
       }else if(s==6||s==10){
         supply.inmonth[s] = round(supply.inmonth[s-1] * analysts.retention19,0)
-      }else if(s==2 || s==3 || s==4){
+      }else if(s==2 || s==3 || s==5){
         supply.inmonth[s] = round(supply.inmonth[s-1] * analysts.retention5678,0) 
       }else if(s==7 || s==8 || s==9 || s==11 || s==12){
         supply.inmonth[s] = round(supply.inmonth[s-1] * analysts.retention,0)
@@ -105,18 +105,72 @@ for(q in 1:100){
         profit[s] = 4000 * supply.inmonth[s] - 400 * (demand.inmonth[s]-supply.inmonth[s])
       }
       total.profit = sum(profit)
-      
-      #return(sum(profit))
     }
-    #print(total.profit)
-    #expected.profit[q,1]=q+10
     expected.profit[q,1]=total.profit
-    which.max(expected.profit)
-    max(expected.profit)
+    E.a.fixed[q,sim] = total.profit
+    Expect.Profit.a.fixed[q] = mean(expected.profit[q,])
+    which.max(Expect.Profit.a.fixed)
+    max(Expect.Profit.a.fixed)
   }
 }
 
 
+
+##(b) Flexible-start strategy
+#profit=rep(0,S)
+expected.profit = matrix(0,nrow=(110-11+1), ncol=1, dimnames = list(c(1:100), c("exp_profit")))
+E.a.fixed = matrix(nrow = 100, ncol = S)
+Expect.Profit.a.fixed = c()
+
+for(q in 1:100){
+  for(sim in 1:S){
+    num.offer=q
+    #s 1~12是四月到三月
+    
+    for(s in 1:12){
+      #demand
+      x = rnorm(1, 0, 0.05)
+      y = rnorm(1, 0, 0.1)
+      A = rbinom(1,num.offer,0.7)
+      demand.inmonth[s] = round(historic.demand[s] * (1+x) * (1+y),0)
+      
+      #supply
+      if(s==1){
+        supply.inmonth[1]= round(63 *analysts.retention,0)
+      }else if(s==4){
+        supply.inmonth[s] = round(supply.inmonth[s-1] * analysts.retention5678,0) + A/2
+      }else if(s==6||s==10){
+        supply.inmonth[s] = round(supply.inmonth[s-1] * analysts.retention19,0)
+      }else if(s==2 || s==3 || s==5){
+        supply.inmonth[s] = round(supply.inmonth[s-1] * analysts.retention5678,0) 
+      }else if(s==7 || s==8 || s==9 || s==11 || s==12){
+        supply.inmonth[s] = round(supply.inmonth[s-1] * analysts.retention,0)
+      }
+      demand.inmonth
+      supply.inmonth
+      if(demand.inmonth[s] == supply.inmonth[s]){
+        profit[s] = 4000 * demand.inmonth[s]
+      }else if(demand.inmonth[s] < supply.inmonth[s]){
+        profit[s] = 10000 * demand.inmonth[s] - 6000 * supply.inmonth[s]
+      }else{
+        profit[s] = 4000 * supply.inmonth[s] - 400 * (demand.inmonth[s]-supply.inmonth[s])
+      }
+      total.profit = sum(profit)
+    }
+    expected.profit[q,1]=total.profit
+    E.a.fixed[q,sim] = total.profit
+    Expect.Profit.a.fixed[q] = mean(expected.profit[q,])
+    which.max(Expect.Profit.a.fixed)
+    max(Expect.Profit.a.fixed)
+  }
+}
+
+######a
+which.max(Expect.Profit.a.fixed)
+max(Expect.Profit.a.fixed)
+plot()
+
+##(b) Fixed-start strategy
 
 
 
