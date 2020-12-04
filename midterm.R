@@ -13,7 +13,7 @@ fixed.fee = 10000
 contribution.productive = 4000
 contribution.transferee = 400
 
-##Work Flow Mangement Problems
+##Work Flow Management Problems
 less.efficient = 0.6
 #immediate cost of recruiting too much
 monthly.total.cost = month.salary + indirect.support.cost
@@ -24,9 +24,9 @@ monthly.total.cost.trans = 9600
 #Fixed-start strategy
 #Flexible-start strategy
 #(1) Start to work on July
-start7 = 0.5
+start7.frac = 0.5
 #(2) Start to work on September
-#start9 = 0.5 * (0.7~1)
+#start9.frac = 0.5 * (0.7~1)
 #(3) Start December
 
 
@@ -44,27 +44,67 @@ mu.demand = 90
 std.demand = 0.5
 
 #analysts retention
-analysts.retention79 = runif(S,0.8,1)
-analysts.retention5678 = runif(S,0.95,1)
-analysts.retention = runif(S,0.9,1)
+analysts.retention19 = analysts.retention5678 = analysts.retention =c()
+analysts.retention19 = runif(1,0.8,1)
+analysts.retention5678 = runif(1,0.95,1)
+analysts.retention = runif(1,0.9,1)
 
 historic.demand=c(75,70,70,110,105,90,65,80,90,120,105,95)
-x = rnorm(S, 0, 0.05)
-y = rnorm(S, 0, 0.1)
+### Model of Supply for Analysis(Start from July)
+retention.rate = c(0.95,0.975,0.975,0.975,0.975,0.9,0.95,0.95,0.95,0.9,0.95,0.95)
 
 ### Model of Demand for Analysis
 #Demand for analysis in month
 demand.inmonth = c()
-
-
-### Model of Supply for Analysis
-retention.rate = c(0.9,0.95,0.95,0.95,0.975,0.975,0.975,0.975,0.9,0.95,0.95,0.95)
+supply.inmonth = c()
+profit=c()
+demand.inmonth.test=c()
+demand.inmonth.test1=c()
+demand.inmonth1 = c()
+x=y=A=c()
 
 
 
 #(a)
-for(s in 1:12){
-  demand.inmonth[s] = historic.demand[s] * (1+x[s]) * (1+y[s])
+sim.revenue.x=function(n){
+  S=1000
+  #profit=rep(0,S)
+  for(n in 11:110){
+   
+    for(i in 1:S){
+      #s 1~12是四月到三月
+      A = rbinom(1,n,0.7)
+      for(s in 1:12){
+        #demand
+        x = rnorm(S, 0, 0.05)
+        y = rnorm(S, 0, 0.1)
+        demand.inmonth[s] = round(historic.demand[s] * (1+x) * (1+y),0)
+      
+        
+        #supply
+        if(s==1){
+          supply.inmonth[1]=63 
+        }else if(s==6||s==10){
+          supply.inmonth[s+1] = round(supply.inmonth[s] * analysts.retention19 + A,0)
+        }else if(s==2 || s==3 || s==4 || s==5){
+          supply.inmonth[s+1] = round(supply.inmonth[s] * analysts.retention5678 + A,0)
+        }else if(s==7 || s==8 || s==9 || s==10 || s==11 || s==12){
+          supply.inmonth[s+1] = round(supply.inmonth[s] * analysts.retention + A,0)
+        }
+        demand.inmonth
+        supply.inmonth
+        if(demand.inmonth[s]==supply.inmonth[s]){
+          profit[s] = 4000 * demand.inmonth[s]
+        }else if(demand.inmonth[s]<supply.inmonth[s]){
+          profit[s] = 10000 * demand.inmonth[s] - 6000 * supply.inmonth[s]
+        }else{
+          profit[s] = 4000 * supply.inmonth[s] - 400 * (demand.inmonth[s]-supply.inmonth[s])
+        }
+        mean(profit[1:12])
+      }
+    }
+    return(c(mean(profit)))
+  }
 }
 
 
