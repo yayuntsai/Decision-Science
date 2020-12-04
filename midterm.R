@@ -70,26 +70,28 @@ sim.revenue.x=function(n){
   S=1000
   #profit=rep(0,S)
   for(n in 11:110){
-   
+    num.offer=n
     for(i in 1:S){
       #s 1~12是四月到三月
-      A = rbinom(1,n,0.7)
+      
       for(s in 1:12){
         #demand
         x = rnorm(S, 0, 0.05)
         y = rnorm(S, 0, 0.1)
+        A = rbinom(1,num.offer,0.7)
         demand.inmonth[s] = round(historic.demand[s] * (1+x) * (1+y),0)
-      
         
         #supply
         if(s==1){
-          supply.inmonth[1]=63 
+          supply.inmonth[1]= round(63 *analysts.retention,0)
+        }else if(s==5){
+          supply.inmonth[s] = round(supply.inmonth[s-1] * analysts.retention5678,0)+ A
         }else if(s==6||s==10){
-          supply.inmonth[s+1] = round(supply.inmonth[s] * analysts.retention19 + A,0)
-        }else if(s==2 || s==3 || s==4 || s==5){
-          supply.inmonth[s+1] = round(supply.inmonth[s] * analysts.retention5678 + A,0)
-        }else if(s==7 || s==8 || s==9 || s==10 || s==11 || s==12){
-          supply.inmonth[s+1] = round(supply.inmonth[s] * analysts.retention + A,0)
+          supply.inmonth[s] = round(supply.inmonth[s-1] * analysts.retention19,0)
+        }else if(s==2 || s==3 || s==4){
+          supply.inmonth[s] = round(supply.inmonth[s-1] * analysts.retention5678,0) 
+        }else if(s==7 || s==8 || s==9 || s==11 || s==12){
+          supply.inmonth[s] = round(supply.inmonth[s-1] * analysts.retention,0)
         }
         demand.inmonth
         supply.inmonth
