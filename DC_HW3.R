@@ -2,23 +2,18 @@
 #install.packages("EnvStats")
 library(EnvStats)
 library(MASS)
-
 fullboat = 3800
 oper.cost = 7200
 S=100
-
 #Demand
 D.Glou = round(rtri(S,4000,8000,7000),0)
 D.Rock = round(rtri(S,4800,7200,6300),0)
-
 #Price
 mu.PRR = 3.65
 sigma.PRR = 0.25
 mu.PRG = 3.5
 sigma.PRG = 0.35
-
 corr.PR = c(-0.8, -0.6, -0.4, -0.2, 0, 0.2, 0.4, 0.6, 0.8)
-
 #expected price at Glou
 sim.PRG = matrix(nrow = S, ncol = 9)
 sim.PRR = matrix(nrow = S, ncol = 9)
@@ -89,6 +84,8 @@ plot_exp_profit = function(){
 
 
 
+
+
 ##Q2
 #Cost parameters
 unitcost = 10
@@ -108,7 +105,7 @@ scale.lose
 shape.lose
 
 #Number of simulation runs
-S=15000
+S=10000
 x.val=seq(5000,13000,1000)
 #prob of game win/lose
 sim.game = sample(c(0,1),S,replace=T,
@@ -130,14 +127,14 @@ profit = function(x=20000, before, after){
   #d: demand realizations
   for(i in 1:S){
     profit.val[i] = (unitprice-unitcost) * min(x,sim.anti[i])
-  
+    #確認比賽後還有剩
     if(x-sim.anti[i] > 0){
       if(sim.game==1){
         #win
-        profit.val[i] = profit.val[i] + (winPR-unitcost) * min(x-sim.anti[i], after[i]) - unitcost * (x-sim.anti[i]-after[i])
+        profit.val[i] = profit.val[i] + (winPR-unitcost) * min(x-sim.anti[i], after[i]) - unitcost * max(x-sim.anti[i]-after[i],0)
       }else{
         #lose
-        profit.val[i] = profit.val[i] + (losePR-unitcost) * min(x-sim.anti[i], after[i]) - unitcost * (x-sim.anti[i]-after[i])
+        profit.val[i] = profit.val[i] + (losePR-unitcost) * min(x-sim.anti[i], after[i]) - unitcost * max(x-sim.anti[i]-after[i],0)
       }
     }
   }
@@ -148,18 +145,30 @@ profit = function(x=20000, before, after){
 sim.profit = matrix(0, nrow=S, ncol=length(x.val))
 avg.profit = c()
 sd.profit = c()
+CVaRq10 = c()
 
 for(i in 1:length(x.val)){
   sim.profit[,i] = profit(x.val[i],sim.anti,after.demand)
   avg.profit[i] = mean(sim.profit[,i])
+  sd.profit[i] = sd(sim.profit[,i])
+  lowestq10=sim.profit[which(sim.profit[,i]<=quantile(sim.profit[,i],0.1)), i]
+  CVaRq10[i] = mean(lowestq10[i])
+  cat("production quantity:", x.val[i], "\n")
 }
-sim.profit
-avg.profit
+summary(CVaRq10)
+
+options(scipen=20)
+#x11(width=12,height=5)
+par(mfrow=c(1,3))
+plot(x.val,avg.profit,type='l',xlab="production quantity",lwd=3)
+plot(x.val[which(avg.profit>120000)],avg.profit[which(avg.profit>120000)],type='l',xlab="production quantity",lwd=3)
+plot(x.val,CVaRq10,type='l',xlab="production quantity",lwd=3)
 
 
-
-
-
+#based on profit
+optimal.quantity1 = x.val[which.max(avg.profit)]
+#based on CVAR
+optimal.quantity2 = x.val[which.max(CVaRq10)]
 
 
 
@@ -171,15 +180,43 @@ co.lose = unitcost-salvage
 cu
 co
 
+dwin = rnorm(1, 6000, 2000)
+dlose = rgamma(1,shape.lose,scale.lose)
 #Calculate the critical fractile
 frac.win = cu.win/(cu.win+co.win)
 frac.lose = cu.lose/(cu.lose+co.lose)
-
-perfectq.win = quantile(sim.d.win,frac.win,names=FALSE) 
+perfectq.win = perfectq.lose = profit.win = profit.lose=c()
+perfectq.win = quantile(dwin,frac.win,names=FALSE) 
 perfectq.win = round(perfectq.win,0)
-perfectq.lose = quantile(sim.d.lose,frac.lose,names=FALSE)
+perfectq.lose = quantile(dlose,frac.lose,names=FALSE)
 perfectq.lose = round(perfectq.lose,0)
-profit.win = profit(perfectq.win,sim.d.win)
-profit.lose = profit(perfectq.lose,sim.d.lose)
+perfectq.before = quantile(sim.anti, frac.win, names=FALSE)
+perfectq.before = round(x.before, 0)
+
+
+profit.perfectinfo=c()
+
+for(s in 1:S){
+  if(sim.result[s] == 1){
+    quantity = perfectq.before + x.win
+    profit.perfectinfo[s] = (unitprice-unitcost)*min(quantity, sim.anti[s])
+    if(quantity - sim.anti[s] > 0){
+      profit.perfectinfo[s] = 
+        profit.perfectinfo[s]+(unitprice-unitcost)*min(quantity-sim.anti[s],dwin[s])
+      -unitcost*max(quantity-sim.anti[s]-dwin[s],0)
+    }
+  }else{
+    quantity = x.before + x.lose
+    profit.perfectinfo[s] = (unitprice-unitcost)*min(quantity, sim.anti[s])
+    if(quantity - sim.anti[s] > 0){
+      profit.perfectinfo[s] = profit.perfectinfo[s]+(losePR-unitcost)*min(quantity-sim.anti[s],dlose[s])-unitcost*max(quantity-sim.anti[s]-dlose[s],0)
+    }
+  }
+}
+
+mean(profit.perfectinfo)
+mean(profit.perfectinfo)-max(avg.profit)
+
+
 
 
